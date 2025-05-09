@@ -1,104 +1,124 @@
-ChatGPT Sentiment Analysis (TF-IDF + Logistic Regression)
+# ChatGPT Sentiment Analysis (LSTM + GloVe Embedding)
 
-This project focuses on analyzing public sentiment toward ChatGPT using tweets. It uses a traditional machine learning approach: TF-IDF vectorization combined with a Logistic Regression classifier to classify tweets into sentiment categories.
+This project analyzes public sentiment toward ChatGPT using tweets. It implements a deep learning approach using **LSTM networks** enhanced by **pre-trained GloVe word embeddings**.
 
-Project Overview
+---
 
-Analyze tweets related to ChatGPT and classify them into three sentiment categories:
+## Project Overview
 
-good (positive sentiment)
+Classify ChatGPT-related tweets into **three sentiment categories**:
 
-neutral
+* `good` (positive sentiment)
+* `neutral`
+* `bad` (negative sentiment)
 
-bad (negative sentiment)
+---
 
-Dataset
+## Dataset
 
-Size: ~219,000 tweets
+* **Size**: \~219,000 tweets
+* **Columns**:
 
-Columns:
+  * `tweets`: raw tweet text
+  * `labels`: sentiment label (`good`, `neutral`, `bad`)
+* **Source**: Pre-collected and cleaned tweet dataset
 
-tweets: raw tweet text
+---
 
-labels: sentiment label (good, neutral, bad)
+## Methodology
 
-Source: Pre-collected and cleaned tweet dataset
+### LSTM with GloVe Embeddings
 
-Methodology
+* **Text Preprocessing**:
 
-TF-IDF + Logistic Regression
+  * Lowercasing, punctuation removal, stopword removal
+  * Tokenization using Keras
+* **Embedding**:
 
-Text Preprocessing:
+  * Pre-trained GloVe vectors (100-dimensional)
+  * Embedding layer was initially frozen (non-trainable)
+* **Model Architecture**:
 
-Convert to lowercase
+  * Embedding Layer (GloVe)
+  * LSTM Layer with 128 units
+  * Dense layers with ReLU activation and Dropout for regularization
+  * Output layer with Softmax for 3-class classification
+* **Training Details**:
 
-Remove punctuation and stopwords
+  * 10 epochs, batch size of 128
+  * Validation split of 10%
+  * Class weights applied to address label imbalance
 
-Tokenize text
+---
 
-Feature Extraction:
+## Results
 
-TF-IDF Vectorizer with max_features=5000
+* **Training Accuracy**: Peaked around \~39% with class weights applied
+* **Validation Accuracy**: Plateaued at \~49.5%
+* **Test Set Performance**:
 
-Transform text data into numerical vectors based on word importance
+  * The model **predicted only the 'neutral' class**, resulting in 0 precision/recall for `bad` and `good`
+  * Likely due to:
 
-Model Training:
+    * Freezing the embedding layer
+    * Insufficient model capacity or tuning
+    * Severe class imbalance
 
-Logistic Regression classifier from scikit-learn
+### Classification Report (Truncated)
 
-80/20 train-test split
+```
+              precision    recall  f1-score   support
 
-Results
+         bad       0.00      0.00      0.00    21559
+     neutral       0.49      1.00      0.66    11198
+        good       0.00      0.00      0.00    11202
 
-Accuracy: 83% on test set
+    accuracy                           0.49    43859
+   macro avg       0.16      0.33      0.22    43859
+weighted avg       0.24      0.49      0.32    43859
+```
 
-F1-Score by Class:
+---
 
-bad: 0.91
+## Tools & Libraries
 
-neutral: 0.69
+* Python
+* Pandas, NLTK, Scikit-learn
+* TensorFlow / Keras
+* Matplotlib, Seaborn
 
-good: 0.81
+---
 
-Insights:
+## Future Improvements
 
-Strong performance in identifying positive and negative sentiments
+* **Unfreeze embedding layer** to allow fine-tuning of word vectors
+* Increase LSTM capacity or try BiLSTM
+* Add more epochs and learning rate scheduling
+* Apply advanced methods: GRU, Transformer-based models (e.g., BERT)
+* Conduct hyperparameter tuning
 
-Neutral class was harder to classify, likely due to linguistic ambiguity
+---
 
-Tools & Libraries
+## Getting Started
 
-Python
+### Install Requirements
 
-Pandas, NLTK, Scikit-learn
-
-Matplotlib, Seaborn
-
-Future Improvements
-
-Address class imbalance with resampling or class weights
-
-Use n-grams or additional metadata as features
-
-Explore deep learning methods (e.g., LSTM, BERT)
-
-Deploy the model with Streamlit or Flask for interactive use
-
-Getting Started
-
-Install Requirements
-
+```bash
 pip install -r requirements.txt
+```
 
-Run Notebook (Google Colab Recommended)
+### Run Notebook (Google Colab Recommended)
 
-TFIDF_LogisticRegression.ipynb
+* `LSTM_GloVe_Model.ipynb`
 
-Author
+---
 
-This project was developed as part of a portfolio on NLP and sentiment analysis using real-world social media data.
+## Author
 
-License
+This project was developed as part of a portfolio on deep learning-based NLP using real-world social media data.
+
+---
+
+## License
 
 MIT License
-
